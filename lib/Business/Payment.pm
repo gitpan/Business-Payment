@@ -1,7 +1,7 @@
 package Business::Payment;
 use Moose;
 
-our $VERSION = '0.01_01';
+our $VERSION = '0.02';
 
 use Business::Payment::Charge;
 
@@ -21,6 +21,17 @@ sub charge {
     my ( $self, %fields ) = @_;
 
     my $roles = $self->processor->charge_roles;
+    return Business::Payment::Charge->new_with_traits(
+        traits => $roles,
+        %fields
+    );
+}
+
+sub refund {
+    my ( $self, %fields ) = @_;
+
+    my $roles = $self->processor->refund_roles;
+    $fields{type} ||= 'CREDIT';
     return Business::Payment::Charge->new_with_traits(
         traits => $roles,
         %fields
@@ -55,8 +66,8 @@ Business::Payment - Payment Processing Library
 
 =head1 NOTICE
 
-This module is currently under development. The API is unstable! Contributions
-and suggestions are welcome.
+This module is currently under development and not recommended for production
+use. The API is unstable! Contributions and suggestions are welcome.
 
 =head1 DESCRIPTION
 
